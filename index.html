@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="HemogloLuz — sistema portátil basado en Arduino Uno para la estimación experimental y no invasiva del riesgo de anemia.">
+<title>HemogloLuz | EUREKA 2026</title>
+<style>
+:root {
+  --bg:#040b19; --navy:#07162f; --panel:#0b2143; --panel2:#0e2b55;
+  --blue:#1d73d8; --cyan:#69d8ff; --ice:#d9efff; --muted:#9db9d7;
+  --line:#1d4778; --accent:#8aa9ff; --white:#f7fbff;
+}
+*{box-sizing:border-box;scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 20% 0%,#0b2b5c 0,transparent 30%),linear-gradient(180deg,#020814,#07162f 55%,#020815);color:var(--white);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;line-height:1.65}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.8;background-image:
+radial-gradient(circle at 10% 15%,#fff 0 1px,transparent 1.5px),
+radial-gradient(circle at 30% 80%,#8ddcff 0 1px,transparent 1.5px),
+radial-gradient(circle at 60% 25%,#fff 0 1px,transparent 1.5px),
+radial-gradient(circle at 78% 72%,#8ddcff 0 1px,transparent 1.5px),
+radial-gradient(circle at 92% 18%,#fff 0 1px,transparent 1.5px);
+background-size:180px 160px,230px 210px,270px 240px,200px 190px,310px 280px}
+a{color:var(--cyan);text-decoration:none} a:hover{text-decoration:underline}
+.container{width:min(1180px,92%);margin:auto}
+header{position:sticky;top:0;z-index:20;background:rgba(3,11,25,.86);backdrop-filter:blur(14px);border-bottom:1px solid #18385e}
+nav{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 0}
+.logo{font-weight:900;letter-spacing:.8px;color:#fff}
+.logo span{color:var(--cyan)}
+.navlinks{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end}
+.navlinks a{font-size:.88rem;color:#c9e5ff;padding:7px 9px;border-radius:10px}
+.navlinks a:hover{background:#0c2c55;text-decoration:none}
+.hero{min-height:92vh;display:grid;place-items:center;padding:80px 0 55px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:36px;align-items:center}
+.kicker{color:var(--cyan);font-weight:800;text-transform:uppercase;letter-spacing:2px;font-size:.78rem}
+h1{font-size:clamp(2.2rem,5vw,4.8rem);line-height:1.03;margin:12px 0 18px;max-width:850px}
+h1 .glow{color:#75dcff;text-shadow:0 0 24px rgba(105,216,255,.28)}
+.lead{font-size:1.08rem;color:#c8ddf4;max-width:760px}
+.badges{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0}
+.badge{padding:8px 12px;border:1px solid #23578e;border-radius:999px;background:rgba(10,37,73,.72);color:#dff4ff;font-size:.86rem}
+.btn{display:inline-block;padding:12px 17px;border-radius:13px;background:linear-gradient(135deg,#1b69c8,#55c8ff);color:#02101f;font-weight:900;margin-right:8px}
+.btn.secondary{background:transparent;color:#d9efff;border:1px solid #28619a}
+.hero-card{background:linear-gradient(145deg,rgba(15,48,91,.92),rgba(4,18,39,.88));border:1px solid #28649a;border-radius:24px;padding:22px;box-shadow:0 20px 80px rgba(0,0,0,.35)}
+.hero-card img{width:100%;border-radius:16px;display:block;border:1px solid #27517b}
+section{padding:78px 0}
+.section-head{margin-bottom:28px}
+.section-head .kicker{margin-bottom:7px}
+h2{font-size:clamp(1.7rem,3vw,2.7rem);margin:0 0 8px}
+h3{margin-top:0;color:#dff5ff}
+.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:linear-gradient(145deg,rgba(11,35,69,.9),rgba(5,20,42,.94));border:1px solid #1b4775;border-radius:20px;padding:22px;box-shadow:0 15px 50px rgba(0,0,0,.2)}
+.card strong{color:#fff}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.metric{padding:20px;border-radius:18px;background:linear-gradient(145deg,#0d2e59,#071a36);border:1px solid #245789}
+.metric .num{font-size:2rem;font-weight:900;color:#78ddff}
+.metric small{color:#a9c6e5}
+.chart{background:#06162e;border:1px solid #1b4775;border-radius:18px;padding:14px;overflow:hidden}
+.chart svg{width:100%;height:auto;display:block}
+.caption{font-size:.86rem;color:#9eb8d5;margin-top:8px}
+.timeline{position:relative;margin-top:20px}
+.step{display:grid;grid-template-columns:50px 1fr;gap:14px;margin-bottom:15px}
+.numdot{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#0d4d88;border:1px solid #4ebcf0;color:#fff;font-weight:900}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.node{padding:12px 14px;background:#0b2d57;border:1px solid #2d679b;border-radius:12px;color:#d9efff}
+.arrow{color:#64d6ff;font-size:1.2rem}
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.gallery figure{margin:0;background:#071a35;border:1px solid #1c4776;border-radius:18px;padding:12px}
+.gallery img{width:100%;max-height:390px;object-fit:contain;background:#020914;border-radius:12px}
+.gallery figcaption{padding:10px 3px 2px;color:#b9d2ed;font-size:.9rem}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{padding:9px 8px;border-bottom:1px solid #193e67;text-align:right}
+th{color:#9fe3ff;background:#0b2850;position:sticky;top:65px}
+td:last-child,th:last-child{text-align:left}
+tr:hover td{background:rgba(25,83,135,.18)}
+.search{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #286092;background:#06172f;color:#fff;margin-bottom:12px}
+.note{border-left:4px solid #59cfff;background:rgba(9,39,75,.72);padding:15px 18px;border-radius:0 14px 14px 0;color:#cfe7fb}
+footer{border-top:1px solid #173c65;padding:35px 0 55px;color:#9db8d6}
+.disclaimer{font-size:.92rem;color:#b9cfe6}
+@media(max-width:900px){.hero-grid,.two{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr 1fr}.gallery{grid-template-columns:1fr}.navlinks{display:none}}
+@media(max-width:600px){.grid,.metrics{grid-template-columns:1fr}section{padding:55px 0}h1{font-size:2.45rem}}
+</style>
+</head>
+<body>
+<header>
+<div class="container">
+<nav>
+<div class="logo">HEMOGLO<span>LUZ</span> · EUREKA 2026</div>
+<div class="navlinks">
+<a href="#problema">Problema</a><a href="#principio">Principio</a><a href="#prototipos">Prototipos</a><a href="#datos">Datos</a><a href="#resultados">Resultados</a><a href="#componentes">Componentes</a><a href="#conclusiones">Conclusiones</a>
+</div>
+</nav>
+</div>
+</header>
+
+<main>
+<section class="hero">
+<div class="container hero-grid">
+<div>
+<div class="kicker">Feria Nacional de Ciencia y Tecnología · EUREKA 2026</div>
+<h1><span class="glow">HemogloLuz</span><br>una mirada óptica al riesgo de anemia</h1>
+<p class="lead">Sistema portátil basado en Arduino Uno para la estimación experimental y no invasiva del riesgo de anemia mediante señales ópticas y variables fisiológicas.</p>
+<div class="badges">
+<span class="badge">Arduino Uno</span><span class="badge">MAX30102</span><span class="badge">MLX90614</span><span class="badge">Fotopletismografía</span><span class="badge">Beer–Lambert</span>
+</div>
+<a class="btn" href="#resultados">Explorar resultados</a>
+<a class="btn secondary" href="#prototipos">Ver prototipos</a>
+</div>
+<div class="hero-card">
+<img src="assets/prototipo2_implementado.png" alt="Segundo prototipo HemogloLuz">
+<p class="caption">Segundo prototipo implementado, presentado en el informe como sistema portátil de medición experimental.</p>
+</div>
+</div>
+</section>
+
+<section id="problema">
+<div class="container">
+<div class="section-head"><div class="kicker">01 · Contexto</div><h2>¿Qué problema aborda?</h2></div>
+<div class="grid">
+<div class="card"><h3>Una necesidad local</h3><p>El informe señala que en Pomabamba, Áncash, el Hospital de Apoyo registró <strong>249 personas con anemia entre enero y julio</strong> para el proyecto. La propuesta parte de esa problemática comunitaria.</p></div>
+<div class="card"><h3>Una limitación tecnológica</h3><p>La medición convencional de hemoglobina requiere procedimientos clínicos, muestras de sangre y equipos adecuados. El proyecto estudia una alternativa <strong>no invasiva, portátil y accesible</strong>.</p></div>
+<div class="card"><h3>Una precisión importante</h3><p>HemogloLuz se plantea como <strong>herramienta de investigación y tamizaje experimental</strong>. El informe deja claro que no sustituye una prueba de laboratorio ni un diagnóstico médico.</p></div>
+</div>
+<div class="note" style="margin-top:20px">La página conserva esta limitación científica: los resultados del prototipo son experimentales y requieren calibración independiente y validación externa antes de cualquier aplicación clínica.</div>
+</div>
+</section>
+
+<section id="principio">
+<div class="container">
+<div class="section-head"><div class="kicker">02 · Fundamento científico</div><h2>De la luz a una variable cuantificable</h2></div>
+<div class="two">
+<div class="card">
+<h3>Ley de Beer–Lambert</h3>
+<p>En el primer prototipo se estudió la relación entre concentración, absorción e intensidad luminosa. La ecuación utilizada es:</p>
+<div style="font-size:1.5rem;text-align:center;padding:15px;color:#8ee4ff">A = log₁₀(I₀ / I) = εbc</div>
+<p class="muted">Al aumentar la concentración de las soluciones, el informe registra una disminución de la intensidad transmitida y un aumento de la absorbancia.</p>
+</div>
+<div class="card">
+<h3>Procesamiento experimental</h3>
+<p>Para el sistema óptico se define un índice <strong>R</strong> a partir de las señales roja e infrarroja y sus referencias sin dedo. Luego:</p>
+<div style="font-size:1.25rem;text-align:center;padding:15px;color:#8ee4ff">R → Hb<sub>est</sub> = a·R + b</div>
+<p class="muted">El informe enfatiza que <strong>a</strong> y <strong>b</strong> no son constantes universales: requieren calibración con valores de hemoglobina de referencia.</p>
+</div>
+</div>
+<div class="flow" style="margin-top:25px">
+<div class="node">Luz</div><div class="arrow">→</div><div class="node">Interacción óptica</div><div class="arrow">→</div><div class="node">Señal PPG / óptica</div><div class="arrow">→</div><div class="node">Arduino</div><div class="arrow">→</div><div class="node">Filtrado + promedio</div><div class="arrow">→</div><div class="node">Índice R</div><div class="arrow">→</div><div class="node">Hb estimada</div>
+</div>
+</div>
+</section>
+
+<section id="prototipos">
+<div class="container">
+<div class="section-head"><div class="kicker">03 · Diseño y construcción</div><h2>Dos prototipos complementarios</h2></div>
+<div class="gallery">
+<figure><img src="assets/diagrama_primer_prototipo.png" alt="Diseño del primer prototipo"><figcaption><strong>Prototipo 1 · Beer–Lambert.</strong> Fuente LED, tubo con solución, fotodetector y Arduino para estudiar la relación concentración–absorbancia.</figcaption></figure>
+<figure><img src="assets/diagrama_segundo_prototipo.png" alt="Diseño del segundo prototipo"><figcaption><strong>Prototipo 2 · HemogloLuz.</strong> Integración de Arduino Uno, sensores, pantalla, alimentación y sistema óptico.</figcaption></figure>
+<figure><img src="assets/prototipo1_implementado.png" alt="Primer prototipo implementado"><figcaption><strong>Implementación del primer prototipo.</strong> Montaje óptico utilizado para medir la luz transmitida por la muestra.</figcaption></figure>
+<figure><img src="assets/prototipo2_implementado.png" alt="Segundo prototipo implementado"><figcaption><strong>Implementación del segundo prototipo.</strong> Carcasa y electrónica del sistema portátil.</figcaption></figure>
+</div>
+</div>
+</section>
+
+<section id="proceso">
+<div class="container">
+<div class="section-head"><div class="kicker">04 · Funcionamiento</div><h2>¿Cómo trabaja HemogloLuz?</h2></div>
+<div class="timeline">
+<div class="step"><div class="numdot">1</div><div class="card"><h3>Adquisición</h3><p>El MAX30102 aporta señales PPG, frecuencia cardíaca y SpO₂; el MLX90614 registra temperatura; el sistema óptico aporta la señal utilizada en el modelo experimental.</p></div></div>
+<div class="step"><div class="numdot">2</div><div class="card"><h3>Procesamiento</h3><p>Arduino Uno recibe las señales, realiza filtrado y promediado y ejecuta las operaciones matemáticas programadas.</p></div></div>
+<div class="step"><div class="numdot">3</div><div class="card"><h3>Visualización y comunicación</h3><p>La pantalla TFT muestra las variables y resultados. El módulo HC-05 permite transmitir información a un dispositivo móvil.</p></div></div>
+<div class="step"><div class="numdot">4</div><div class="card"><h3>Comparación experimental</h3><p>La Hb estimada se compara con la Hb de referencia ajustada. El informe utiliza error porcentual, MAE, RMSE y análisis de relación lineal.</p></div></div>
+</div>
+</div>
+</section>
+
+<section id="datos">
+<div class="container">
+<div class="section-head"><div class="kicker">05 · Evidencia cuantitativa</div><h2>Los 70 registros del segundo prototipo</h2></div>
+<div class="metrics">
+<div class="metric"><div class="num">70</div><small>registros analizados</small></div>
+<div class="metric"><div class="num">4.05%</div><small>error porcentual medio</small></div>
+<div class="metric"><div class="num">0.55</div><small>MAE · g/dL</small></div>
+<div class="metric"><div class="num">0.997</div><small>R² aproximado</small></div>
+</div>
+<div class="grid" style="margin-top:18px">
+<div class="metric"><div class="num">0.55</div><small>RMSE · g/dL</small></div>
+<div class="metric"><div class="num">0.70</div><small>error absoluto máximo · g/dL</small></div>
+<div class="metric"><div class="num">-0.55</div><small>diferencia media · g/dL</small></div>
+</div>
+<div class="note" style="margin-top:18px">El informe especifica que estas estadísticas describen el conjunto experimental y <strong>no representan precisión clínica</strong>. Además, la validación retrospectiva no reemplaza una calibración independiente.</div>
+</div>
+</section>
+
+<section id="resultados">
+<div class="container">
+<div class="section-head"><div class="kicker">06 · Gráficos</div><h2>Resultados visuales</h2></div>
+<div class="two">
+<div class="chart"><svg viewBox="0 0 760 390" role="img" aria-label="Gráfico de Hb de referencia frente a Hb estimada"><line x1="70.0" y1="335.0" x2="70.0" y2="30.0" stroke="#173b70" opacity=".35"/><line x1="70.0" y1="335.0" x2="735.0" y2="335.0" stroke="#173b70" opacity=".35"/><text x="70.0" y="365" fill="#b8d7ff" text-anchor="middle" font-size="12">10</text><text x="54" y="339.0" fill="#b8d7ff" text-anchor="end" font-size="12">10</text><line x1="180.8" y1="335.0" x2="180.8" y2="30.0" stroke="#173b70" opacity=".35"/><line x1="70.0" y1="284.2" x2="735.0" y2="284.2" stroke="#173b70" opacity=".35"/><text x="180.8" y="365" fill="#b8d7ff" text-anchor="middle" font-size="12">11</text><text x="54" y="288.2" fill="#b8d7ff" text-anchor="end" font-size="12">11</text><line x1="291.7" y1="335.0" x2="291.7" y2="30.0" stroke="#173b70" opacity=".35"/><line x1="70.0" y1="233.3" x2="735.0" y2="233.3" stroke="#173b70" opacity=".35"/><text x="291.7" y="365" fill="#b8d7ff" text-anchor="middle" font-size="12">12</text><text x="54" y="237.3" fill="#b8d7ff" text-anchor="end" font-size="12">12</text><line x1="402.5" y1="335.0" x2="402.5" y2="30.0" stroke="#173b70" opacity=".35"/><line x1="70.0" y1="182.5" x2="735.0" y2="182.5" stroke="#173b70" opacity=".35"/><text x="402.5" y="365" fill="#b8d7ff" text-anchor="middle" font-size="12">13</text><text x="54" y="186.5" fill="#b8d7ff" text-anchor="end" font-size="12">13</text><line x1="513.3" y1="335.0" x2="513.3" y2="30.0" stroke="#173b70" opacity=".35"/><line x1="70.0" y1="131.7" x2="735.0" y2="131.7" stroke="#173b70" opacity=".35"/><text x="513.3" y="365" fill="#b8d7ff" text-anchor="middle" font-size="12">14</text><text x="54" y="135.7" fill="#b8d7ff" text-anchor="end" font-size="12">14</text><line x1="624.2" y1="335.0" x2="624.2" y2="30.0" stroke="#173b70" opacity=".35"/><line x1="70.0" y1="80.8" x2="735.0" y2="80.8" stroke="#173b70" opacity=".35"/><text x="624.2" y="365" fill="#b8d7ff" text-anchor="middle" font-size="12">15</text><text x="54" y="84.8" fill="#b8d7ff" text-anchor="end" font-size="12">15</text><line x1="735.0" y1="335.0" x2="735.0" y2="30.0" stroke="#173b70" opacity=".35"/><line x1="70.0" y1="30.0" x2="735.0" y2="30.0" stroke="#173b70" opacity=".35"/><text x="735.0" y="365" fill="#b8d7ff" text-anchor="middle" font-size="12">16</text><text x="54" y="34.0" fill="#b8d7ff" text-anchor="end" font-size="12">16</text><line x1="70.0" y1="335.0" x2="735.0" y2="30.0" stroke="#7fd7ff" stroke-width="2" stroke-dasharray="7 6" opacity=".8"/><circle cx="391.4" cy="207.9" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="524.4" cy="157.1" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="480.1" cy="172.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="280.6" cy="258.8" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="269.5" cy="268.9" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="557.7" cy="141.8" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="347.1" cy="228.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="435.8" cy="192.7" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="624.2" cy="111.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="402.5" cy="207.9" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="302.7" cy="248.6" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="502.2" cy="167.2" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="546.6" cy="146.9" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="369.2" cy="223.2" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="457.9" cy="182.5" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="646.3" cy="106.2" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="336.0" cy="233.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="513.3" cy="162.2" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="579.8" cy="131.7" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="313.8" cy="243.5" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="413.6" cy="202.8" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="602.0" cy="121.5" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="469.0" cy="182.5" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="324.9" cy="238.4" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="635.2" cy="111.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="446.8" cy="187.6" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="380.3" cy="218.1" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="535.5" cy="152.0" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="491.2" cy="172.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="313.8" cy="248.6" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="568.8" cy="136.8" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="424.7" cy="197.8" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="358.2" cy="228.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="613.1" cy="121.5" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="391.4" cy="213.0" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="480.1" cy="177.4" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="302.7" cy="253.7" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="590.9" cy="131.7" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="435.8" cy="192.7" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="402.5" cy="207.9" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="557.7" cy="141.8" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="502.2" cy="167.2" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="347.1" cy="233.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="635.2" cy="111.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="457.9" cy="182.5" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="380.3" cy="218.1" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="535.5" cy="152.0" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="513.3" cy="162.2" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="324.9" cy="243.5" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="579.8" cy="136.8" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="424.7" cy="197.8" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="114.3" cy="345.2" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="469.0" cy="177.4" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="369.2" cy="223.2" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="546.6" cy="146.9" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="491.2" cy="172.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="291.7" cy="253.7" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="613.1" cy="121.5" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="413.6" cy="202.8" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="469.0" cy="182.5" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="568.8" cy="136.8" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="336.0" cy="233.3" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="524.4" cy="157.1" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="391.4" cy="213.0" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="590.9" cy="131.7" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="446.8" cy="187.6" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="313.8" cy="248.6" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="624.2" cy="116.4" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="480.1" cy="177.4" r="3.2" fill="#66d9ff" opacity=".72"/><circle cx="380.3" cy="218.1" r="3.2" fill="#66d9ff" opacity=".72"/><text x="380.0" y="385" fill="#d9ecff" text-anchor="middle" font-size="13">Hb de referencia ajustada (g/dL)</text><text x="18" y="195.0" fill="#d9ecff" text-anchor="middle" font-size="13" transform="rotate(-90 18 195.0)">HemogloLuz H* (g/dL)</text></svg><div class="caption">Hb de referencia ajustada frente a Hb estimada. La línea punteada representa la igualdad ideal; los puntos corresponden a los 70 registros.</div></div>
+<div class="chart"><svg viewBox="0 0 760 330" role="img" aria-label="Error porcentual por registro"><line x1="55" y1="285.0" x2="735" y2="285.0" stroke="#173b70" opacity=".35"/><text x="45" y="289.0" fill="#b8d7ff" text-anchor="end" font-size="11">0</text><line x1="55" y1="241.7" x2="735" y2="241.7" stroke="#173b70" opacity=".35"/><text x="45" y="245.7" fill="#b8d7ff" text-anchor="end" font-size="11">1</text><line x1="55" y1="198.3" x2="735" y2="198.3" stroke="#173b70" opacity=".35"/><text x="45" y="202.3" fill="#b8d7ff" text-anchor="end" font-size="11">2</text><line x1="55" y1="155.0" x2="735" y2="155.0" stroke="#173b70" opacity=".35"/><text x="45" y="159.0" fill="#b8d7ff" text-anchor="end" font-size="11">3</text><line x1="55" y1="111.7" x2="735" y2="111.7" stroke="#173b70" opacity=".35"/><text x="45" y="115.7" fill="#b8d7ff" text-anchor="end" font-size="11">4</text><line x1="55" y1="68.3" x2="735" y2="68.3" stroke="#173b70" opacity=".35"/><text x="45" y="72.3" fill="#b8d7ff" text-anchor="end" font-size="11">5</text><line x1="55" y1="25.0" x2="735" y2="25.0" stroke="#173b70" opacity=".35"/><text x="45" y="29.0" fill="#b8d7ff" text-anchor="end" font-size="11">6</text><polyline points="55.0,150.7 64.9,98.7 74.7,129.0 84.6,137.7 94.4,103.0 104.3,103.0 114.1,146.3 124.0,120.3 133.8,111.7 143.7,120.3 153.6,142.0 163.4,98.7 173.3,103.0 183.1,116.0 193.0,124.7 202.8,85.7 212.7,146.3 222.5,98.7 232.4,107.3 242.2,142.0 252.1,120.3 262.0,107.3 271.8,94.3 281.7,142.0 291.5,85.7 301.4,124.7 311.2,116.0 321.1,103.0 330.9,98.7 340.8,107.3 350.7,107.3 360.5,120.3 370.4,111.7 380.2,81.3 390.1,116.0 399.9,94.3 409.8,107.3 419.6,77.0 429.5,120.3 439.3,120.3 449.2,103.0 459.1,98.7 468.9,111.7 478.8,85.7 488.6,124.7 498.5,116.0 508.3,103.0 518.2,98.7 528.0,107.3 537.9,77.0 547.8,120.3 557.6,33.7 567.5,124.7 577.3,116.0 587.2,103.0 597.0,98.7 606.9,142.0 616.7,81.3 626.6,120.3 636.4,94.3 646.3,107.3 656.2,146.3 666.0,98.7 675.9,116.0 685.7,77.0 695.6,124.7 705.4,107.3 715.3,81.3 725.1,94.3 735.0,116.0" fill="none" stroke="#63c8ff" stroke-width="2" opacity=".85"/><circle cx="55.0" cy="150.7" r="2.5" fill="#a6ecff"/><circle cx="64.9" cy="98.7" r="2.5" fill="#a6ecff"/><circle cx="74.7" cy="129.0" r="2.5" fill="#a6ecff"/><circle cx="84.6" cy="137.7" r="2.5" fill="#a6ecff"/><circle cx="94.4" cy="103.0" r="2.5" fill="#a6ecff"/><circle cx="104.3" cy="103.0" r="2.5" fill="#a6ecff"/><circle cx="114.1" cy="146.3" r="2.5" fill="#a6ecff"/><circle cx="124.0" cy="120.3" r="2.5" fill="#a6ecff"/><circle cx="133.8" cy="111.7" r="2.5" fill="#a6ecff"/><circle cx="143.7" cy="120.3" r="2.5" fill="#a6ecff"/><circle cx="153.6" cy="142.0" r="2.5" fill="#a6ecff"/><circle cx="163.4" cy="98.7" r="2.5" fill="#a6ecff"/><circle cx="173.3" cy="103.0" r="2.5" fill="#a6ecff"/><circle cx="183.1" cy="116.0" r="2.5" fill="#a6ecff"/><circle cx="193.0" cy="124.7" r="2.5" fill="#a6ecff"/><circle cx="202.8" cy="85.7" r="2.5" fill="#a6ecff"/><circle cx="212.7" cy="146.3" r="2.5" fill="#a6ecff"/><circle cx="222.5" cy="98.7" r="2.5" fill="#a6ecff"/><circle cx="232.4" cy="107.3" r="2.5" fill="#a6ecff"/><circle cx="242.2" cy="142.0" r="2.5" fill="#a6ecff"/><circle cx="252.1" cy="120.3" r="2.5" fill="#a6ecff"/><circle cx="262.0" cy="107.3" r="2.5" fill="#a6ecff"/><circle cx="271.8" cy="94.3" r="2.5" fill="#a6ecff"/><circle cx="281.7" cy="142.0" r="2.5" fill="#a6ecff"/><circle cx="291.5" cy="85.7" r="2.5" fill="#a6ecff"/><circle cx="301.4" cy="124.7" r="2.5" fill="#a6ecff"/><circle cx="311.2" cy="116.0" r="2.5" fill="#a6ecff"/><circle cx="321.1" cy="103.0" r="2.5" fill="#a6ecff"/><circle cx="330.9" cy="98.7" r="2.5" fill="#a6ecff"/><circle cx="340.8" cy="107.3" r="2.5" fill="#a6ecff"/><circle cx="350.7" cy="107.3" r="2.5" fill="#a6ecff"/><circle cx="360.5" cy="120.3" r="2.5" fill="#a6ecff"/><circle cx="370.4" cy="111.7" r="2.5" fill="#a6ecff"/><circle cx="380.2" cy="81.3" r="2.5" fill="#a6ecff"/><circle cx="390.1" cy="116.0" r="2.5" fill="#a6ecff"/><circle cx="399.9" cy="94.3" r="2.5" fill="#a6ecff"/><circle cx="409.8" cy="107.3" r="2.5" fill="#a6ecff"/><circle cx="419.6" cy="77.0" r="2.5" fill="#a6ecff"/><circle cx="429.5" cy="120.3" r="2.5" fill="#a6ecff"/><circle cx="439.3" cy="120.3" r="2.5" fill="#a6ecff"/><circle cx="449.2" cy="103.0" r="2.5" fill="#a6ecff"/><circle cx="459.1" cy="98.7" r="2.5" fill="#a6ecff"/><circle cx="468.9" cy="111.7" r="2.5" fill="#a6ecff"/><circle cx="478.8" cy="85.7" r="2.5" fill="#a6ecff"/><circle cx="488.6" cy="124.7" r="2.5" fill="#a6ecff"/><circle cx="498.5" cy="116.0" r="2.5" fill="#a6ecff"/><circle cx="508.3" cy="103.0" r="2.5" fill="#a6ecff"/><circle cx="518.2" cy="98.7" r="2.5" fill="#a6ecff"/><circle cx="528.0" cy="107.3" r="2.5" fill="#a6ecff"/><circle cx="537.9" cy="77.0" r="2.5" fill="#a6ecff"/><circle cx="547.8" cy="120.3" r="2.5" fill="#a6ecff"/><circle cx="557.6" cy="33.7" r="2.5" fill="#a6ecff"/><circle cx="567.5" cy="124.7" r="2.5" fill="#a6ecff"/><circle cx="577.3" cy="116.0" r="2.5" fill="#a6ecff"/><circle cx="587.2" cy="103.0" r="2.5" fill="#a6ecff"/><circle cx="597.0" cy="98.7" r="2.5" fill="#a6ecff"/><circle cx="606.9" cy="142.0" r="2.5" fill="#a6ecff"/><circle cx="616.7" cy="81.3" r="2.5" fill="#a6ecff"/><circle cx="626.6" cy="120.3" r="2.5" fill="#a6ecff"/><circle cx="636.4" cy="94.3" r="2.5" fill="#a6ecff"/><circle cx="646.3" cy="107.3" r="2.5" fill="#a6ecff"/><circle cx="656.2" cy="146.3" r="2.5" fill="#a6ecff"/><circle cx="666.0" cy="98.7" r="2.5" fill="#a6ecff"/><circle cx="675.9" cy="116.0" r="2.5" fill="#a6ecff"/><circle cx="685.7" cy="77.0" r="2.5" fill="#a6ecff"/><circle cx="695.6" cy="124.7" r="2.5" fill="#a6ecff"/><circle cx="705.4" cy="107.3" r="2.5" fill="#a6ecff"/><circle cx="715.3" cy="81.3" r="2.5" fill="#a6ecff"/><circle cx="725.1" cy="94.3" r="2.5" fill="#a6ecff"/><circle cx="735.0" cy="116.0" r="2.5" fill="#a6ecff"/><text x="380.0" y="322" fill="#d9ecff" text-anchor="middle" font-size="12">Registro</text><text x="14" y="165.0" fill="#d9ecff" text-anchor="middle" font-size="12" transform="rotate(-90 14 165.0)">Error (%)</text></svg><div class="caption">Error porcentual por registro. El máximo consignado en el informe es 5,8 %.</div></div>
+</div>
+<div class="two" style="margin-top:20px">
+<div class="chart"><svg viewBox="0 0 760 330" role="img" aria-label="Diferencia HemogloLuz menos referencia"><line x1="55" y1="285.0" x2="735" y2="285.0" stroke="#173b70" opacity=".35"/><text x="45" y="289.0" fill="#b8d7ff" text-anchor="end" font-size="11">-0.8</text><line x1="55" y1="227.2" x2="735" y2="227.2" stroke="#173b70" opacity=".35"/><text x="45" y="231.2" fill="#b8d7ff" text-anchor="end" font-size="11">-0.6</text><line x1="55" y1="169.4" x2="735" y2="169.4" stroke="#173b70" opacity=".35"/><text x="45" y="173.4" fill="#b8d7ff" text-anchor="end" font-size="11">-0.4</text><line x1="55" y1="111.7" x2="735" y2="111.7" stroke="#173b70" opacity=".35"/><text x="45" y="115.7" fill="#b8d7ff" text-anchor="end" font-size="11">-0.2</text><line x1="55" y1="53.9" x2="735" y2="53.9" stroke="#173b70" opacity=".35"/><text x="45" y="57.9" fill="#b8d7ff" text-anchor="end" font-size="11">0.0</text><line x1="55" y1="53.9" x2="735" y2="53.9" stroke="#7fd7ff" stroke-dasharray="6 6" opacity=".8"/><polyline points="55.0,169.4 64.9,227.2 74.7,198.3 84.6,169.4 94.4,198.3 104.3,227.2 114.1,169.4 124.0,198.3 133.8,227.2 143.7,198.3 153.6,169.4 163.4,227.2 173.3,227.2 183.1,198.3 193.0,198.3 202.8,256.1 212.7,169.4 222.5,227.2 232.4,227.2 242.2,169.4 252.1,198.3 262.0,227.2 271.8,227.2 281.7,169.4 291.5,256.1 301.4,198.3 311.2,198.3 321.1,227.2 330.9,227.2 340.8,198.3 350.7,227.2 360.5,198.3 370.4,198.3 380.2,256.1 390.1,198.3 399.9,227.2 409.8,198.3 419.6,256.1 429.5,198.3 439.3,198.3 449.2,227.2 459.1,227.2 468.9,198.3 478.8,256.1 488.6,198.3 498.5,198.3 508.3,227.2 518.2,227.2 528.0,198.3 537.9,256.1 547.8,198.3 557.6,227.2 567.5,198.3 577.3,198.3 587.2,227.2 597.0,227.2 606.9,169.4 616.7,256.1 626.6,198.3 636.4,227.2 646.3,227.2 656.2,169.4 666.0,227.2 675.9,198.3 685.7,256.1 695.6,198.3 705.4,198.3 715.3,256.1 725.1,227.2 735.0,198.3" fill="none" stroke="#8aa9ff" stroke-width="2"/><circle cx="55.0" cy="169.4" r="2.5" fill="#b7d9ff"/><circle cx="64.9" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="74.7" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="84.6" cy="169.4" r="2.5" fill="#b7d9ff"/><circle cx="94.4" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="104.3" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="114.1" cy="169.4" r="2.5" fill="#b7d9ff"/><circle cx="124.0" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="133.8" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="143.7" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="153.6" cy="169.4" r="2.5" fill="#b7d9ff"/><circle cx="163.4" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="173.3" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="183.1" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="193.0" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="202.8" cy="256.1" r="2.5" fill="#b7d9ff"/><circle cx="212.7" cy="169.4" r="2.5" fill="#b7d9ff"/><circle cx="222.5" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="232.4" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="242.2" cy="169.4" r="2.5" fill="#b7d9ff"/><circle cx="252.1" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="262.0" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="271.8" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="281.7" cy="169.4" r="2.5" fill="#b7d9ff"/><circle cx="291.5" cy="256.1" r="2.5" fill="#b7d9ff"/><circle cx="301.4" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="311.2" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="321.1" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="330.9" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="340.8" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="350.7" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="360.5" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="370.4" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="380.2" cy="256.1" r="2.5" fill="#b7d9ff"/><circle cx="390.1" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="399.9" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="409.8" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="419.6" cy="256.1" r="2.5" fill="#b7d9ff"/><circle cx="429.5" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="439.3" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="449.2" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="459.1" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="468.9" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="478.8" cy="256.1" r="2.5" fill="#b7d9ff"/><circle cx="488.6" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="498.5" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="508.3" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="518.2" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="528.0" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="537.9" cy="256.1" r="2.5" fill="#b7d9ff"/><circle cx="547.8" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="557.6" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="567.5" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="577.3" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="587.2" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="597.0" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="606.9" cy="169.4" r="2.5" fill="#b7d9ff"/><circle cx="616.7" cy="256.1" r="2.5" fill="#b7d9ff"/><circle cx="626.6" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="636.4" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="646.3" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="656.2" cy="169.4" r="2.5" fill="#b7d9ff"/><circle cx="666.0" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="675.9" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="685.7" cy="256.1" r="2.5" fill="#b7d9ff"/><circle cx="695.6" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="705.4" cy="198.3" r="2.5" fill="#b7d9ff"/><circle cx="715.3" cy="256.1" r="2.5" fill="#b7d9ff"/><circle cx="725.1" cy="227.2" r="2.5" fill="#b7d9ff"/><circle cx="735.0" cy="198.3" r="2.5" fill="#b7d9ff"/><text x="380.0" y="322" fill="#d9ecff" text-anchor="middle" font-size="12">Registro</text><text x="14" y="165.0" fill="#d9ecff" text-anchor="middle" font-size="12" transform="rotate(-90 14 165.0)">Hb estimada − Hb referencia (g/dL)</text></svg><div class="caption">Diferencia HemogloLuz − referencia. La diferencia media reportada es −0,55 g/dL, lo que indica una tendencia general hacia la subestimación.</div></div>
+<div class="card">
+<h3>Clasificación registrada</h3>
+<div style="display:grid;gap:12px;margin-top:18px">
+<div><strong>59</strong> registros · Normal</div>
+<div><strong>10</strong> registros · Anemia leve</div>
+<div><strong>1</strong> registro · Anemia moderada</div>
+</div>
+<p class="muted" style="margin-top:18px">Estas etiquetas son las consignadas en la tabla del informe y deben interpretarse como parte del conjunto experimental, no como diagnóstico clínico.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="componentes">
+<div class="container">
+<div class="section-head"><div class="kicker">07 · Arquitectura</div><h2>Componentes principales</h2></div>
+<div class="grid">
+<div class="card"><h3>Arduino Uno Rev3</h3><img src="assets/arduino_uno.jpeg" alt="Arduino Uno" style="width:100%;height:130px;object-fit:contain"><p>Procesamiento central, filtrado, promediado y operaciones matemáticas del modelo.</p></div>
+<div class="card"><h3>MAX30102</h3><img src="assets/max30102.jpeg" alt="MAX30102" style="width:100%;height:130px;object-fit:contain"><p>PPG, frecuencia cardíaca, SpO₂ y señales ópticas roja e infrarroja.</p></div>
+<div class="card"><h3>MLX90614</h3><img src="assets/mlx90614.jpeg" alt="MLX90614" style="width:100%;height:130px;object-fit:contain"><p>Medición de temperatura corporal sin contacto.</p></div>
+<div class="card"><h3>Pantalla TFT</h3><img src="assets/pantalla_tft.jpeg" alt="Pantalla TFT" style="width:100%;height:130px;object-fit:contain"><p>Visualización de variables y resultados del prototipo.</p></div>
+<div class="card"><h3>Bluetooth HC-05</h3><img src="assets/bluetooth_hc05.jpeg" alt="HC-05" style="width:100%;height:130px;object-fit:contain"><p>Transmisión de información mediante UART.</p></div>
+<div class="card"><h3>Alimentación portátil</h3><img src="assets/bateria_18650.jpeg" alt="Batería 18650" style="width:100%;height:130px;object-fit:contain"><p>Batería Li-ion 18650 y módulo TP4056 para alimentación y recarga.</p></div>
+</div>
+</div>
+</section>
+
+<section id="seguridad">
+<div class="container">
+<div class="section-head"><div class="kicker">08 · Seguridad y control</div><h2>Condiciones de medición</h2></div>
+<div class="grid">
+<div class="card"><h3>Seguridad eléctrica</h3><p>Trabajar con bajos voltajes, verificar conexiones y evitar cortocircuitos o conexiones invertidas.</p></div>
+<div class="card"><h3>Protección y aislamiento</h3><p>La batería debe contar con protección y los componentes deben mantenerse dentro de la carcasa para evitar contactos accidentales.</p></div>
+<div class="card"><h3>Medición controlada</h3><p>Mantener posición similar del dedo, tiempo de adquisición e iluminación estable para reducir variaciones.</p></div>
+<div class="card"><h3>Higiene</h3><p>Limpiar y desinfectar la superficie de contacto antes y después de las pruebas cuando se utilice por diferentes personas.</p></div>
+<div class="card"><h3>Protección de sensores</h3><p>Evitar golpes, humedad y contacto directo con líquidos, especialmente en MAX30102 y MLX90614.</p></div>
+<div class="card"><h3>Supervisión</h3><p>Las pruebas experimentales deben realizarse bajo supervisión de las integrantes responsables y detenerse ante cualquier funcionamiento anormal.</p></div>
+</div>
+</div>
+</section>
+
+<section id="tabla">
+<div class="container">
+<div class="section-head"><div class="kicker">09 · Datos completos</div><h2>Tabla interactiva de los 70 registros</h2></div>
+<input id="search" class="search" type="search" placeholder="Buscar por número o resultado…">
+<div class="card" style="padding:10px;overflow:auto;max-height:620px">
+<table id="dataTable">
+<thead><tr><th>N.º</th><th>Hb laboratorio</th><th>Hb ref. ajustada</th><th>HemogloLuz H*</th><th>Error (%)</th><th>Resultado</th></tr></thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<section id="conclusiones">
+<div class="container">
+<div class="section-head"><div class="kicker">10 · Cierre científico</div><h2>Conclusiones y siguientes pasos</h2></div>
+<div class="two">
+<div class="card">
+<h3>Lo que mostró el proyecto</h3>
+<ul>
+<li>El primer prototipo mostró la tendencia prevista por Beer–Lambert: mayor concentración, menor intensidad transmitida y mayor absorbancia.</li>
+<li>El segundo prototipo integró Arduino Uno, MAX30102, MLX90614 y sistema óptico.</li>
+<li>El filtrado y el promedio ayudaron a reducir variaciones.</li>
+<li>Los 70 registros presentaron un error porcentual medio de 4,05 % y máximo de 5,8 %.</li>
+</ul>
+</div>
+<div class="card">
+<h3>Lo que todavía debe validarse</h3>
+<ul>
+<li>Conservar las señales ópticas en bruto.</li>
+<li>Construir una calibración prospectiva con un conjunto de referencia independiente.</li>
+<li>Comparar el modelo con validación externa.</li>
+<li>Aumentar el número de registros.</li>
+<li>Evaluar futuras aplicaciones experimentales solo después de un rendimiento suficiente.</li>
+</ul>
+</div>
+</div>
+<div class="note" style="margin-top:20px"><strong>Mensaje científico central:</strong> HemogloLuz demuestra una alternativa tecnológica experimental para estudiar señales ópticas y variables fisiológicas relacionadas con la hemoglobina, pero el propio informe establece que todavía no es un dispositivo de diagnóstico.</div>
+</div>
+</section>
+
+<section id="referencias">
+<div class="container">
+<div class="section-head"><div class="kicker">11 · Referencias</div><h2>Fuentes citadas en el informe</h2></div>
+<div class="card">
+<p>Allen (2007) · Photoplethysmography and its application in clinical physiological measurement.</p>
+<p>Analog Devices · MAX30102.</p>
+<p>Melexis · MLX90614.</p>
+<p>Chaparro &amp; Suchdev (2019) · Anemia epidemiology, pathophysiology, and etiology.</p>
+<p>McMurdy, Jay &amp; Kuo (2008) · Noninvasive optical, electrical, and acoustic methods of total hemoglobin determination.</p>
+<p>Oshina &amp; Spigulis (2021) · Beer–Lambert law for optical tissue diagnostics.</p>
+<p>Pasricha et al. (2024) · Measuring haemoglobin concentration to define anaemia.</p>
+<p>Sun &amp; Thakor (2016) · Photoplethysmography revisited.</p>
+<p>World Health Organization (2024) · Guideline on haemoglobin cutoffs to define anaemia.</p>
+</div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container">
+<p><strong>HemogloLuz · EUREKA 2026</strong></p>
+<p>Institución Educativa Parroquial San José – Pomabamba · Áncash</p>
+<p class="disclaimer">Versión web educativa basada en el informe del proyecto. Se han omitido datos personales de contacto del documento para una publicación web pública.</p>
+<p class="disclaimer">Los resultados son experimentales y no sustituyen una prueba de laboratorio ni un diagnóstico médico.</p>
+</div>
+</footer>
+
+<script>
+const DATA = [{"n": 1, "hb_lab": 14.7, "hb_ref": 12.9, "hb_est": 12.5, "error": 3.1, "result": "Normal"}, {"n": 2, "hb_lab": 15.9, "hb_ref": 14.1, "hb_est": 13.5, "error": 4.3, "result": "Normal"}, {"n": 3, "hb_lab": 15.5, "hb_ref": 13.7, "hb_est": 13.2, "error": 3.6, "result": "Normal"}, {"n": 4, "hb_lab": 13.7, "hb_ref": 11.9, "hb_est": 11.5, "error": 3.4, "result": "Anemia leve"}, {"n": 5, "hb_lab": 13.6, "hb_ref": 11.8, "hb_est": 11.3, "error": 4.2, "result": "Anemia leve"}, {"n": 6, "hb_lab": 16.2, "hb_ref": 14.4, "hb_est": 13.8, "error": 4.2, "result": "Normal"}, {"n": 7, "hb_lab": 14.3, "hb_ref": 12.5, "hb_est": 12.1, "error": 3.2, "result": "Normal"}, {"n": 8, "hb_lab": 15.1, "hb_ref": 13.3, "hb_est": 12.8, "error": 3.8, "result": "Normal"}, {"n": 9, "hb_lab": 16.8, "hb_ref": 15.0, "hb_est": 14.4, "error": 4.0, "result": "Normal"}, {"n": 10, "hb_lab": 14.8, "hb_ref": 13.0, "hb_est": 12.5, "error": 3.8, "result": "Normal"}, {"n": 11, "hb_lab": 13.9, "hb_ref": 12.1, "hb_est": 11.7, "error": 3.3, "result": "Anemia leve"}, {"n": 12, "hb_lab": 15.7, "hb_ref": 13.9, "hb_est": 13.3, "error": 4.3, "result": "Normal"}, {"n": 13, "hb_lab": 16.1, "hb_ref": 14.3, "hb_est": 13.7, "error": 4.2, "result": "Normal"}, {"n": 14, "hb_lab": 14.5, "hb_ref": 12.7, "hb_est": 12.2, "error": 3.9, "result": "Normal"}, {"n": 15, "hb_lab": 15.3, "hb_ref": 13.5, "hb_est": 13.0, "error": 3.7, "result": "Normal"}, {"n": 16, "hb_lab": 17.0, "hb_ref": 15.2, "hb_est": 14.5, "error": 4.6, "result": "Normal"}, {"n": 17, "hb_lab": 14.2, "hb_ref": 12.4, "hb_est": 12.0, "error": 3.2, "result": "Normal"}, {"n": 18, "hb_lab": 15.8, "hb_ref": 14.0, "hb_est": 13.4, "error": 4.3, "result": "Normal"}, {"n": 19, "hb_lab": 16.4, "hb_ref": 14.6, "hb_est": 14.0, "error": 4.1, "result": "Normal"}, {"n": 20, "hb_lab": 14.0, "hb_ref": 12.2, "hb_est": 11.8, "error": 3.3, "result": "Anemia leve"}, {"n": 21, "hb_lab": 14.9, "hb_ref": 13.1, "hb_est": 12.6, "error": 3.8, "result": "Normal"}, {"n": 22, "hb_lab": 16.6, "hb_ref": 14.8, "hb_est": 14.2, "error": 4.1, "result": "Normal"}, {"n": 23, "hb_lab": 15.4, "hb_ref": 13.6, "hb_est": 13.0, "error": 4.4, "result": "Normal"}, {"n": 24, "hb_lab": 14.1, "hb_ref": 12.3, "hb_est": 11.9, "error": 3.3, "result": "Anemia leve"}, {"n": 25, "hb_lab": 16.9, "hb_ref": 15.1, "hb_est": 14.4, "error": 4.6, "result": "Normal"}, {"n": 26, "hb_lab": 15.2, "hb_ref": 13.4, "hb_est": 12.9, "error": 3.7, "result": "Normal"}, {"n": 27, "hb_lab": 14.6, "hb_ref": 12.8, "hb_est": 12.3, "error": 3.9, "result": "Normal"}, {"n": 28, "hb_lab": 16.0, "hb_ref": 14.2, "hb_est": 13.6, "error": 4.2, "result": "Normal"}, {"n": 29, "hb_lab": 15.6, "hb_ref": 13.8, "hb_est": 13.2, "error": 4.3, "result": "Normal"}, {"n": 30, "hb_lab": 14.0, "hb_ref": 12.2, "hb_est": 11.7, "error": 4.1, "result": "Anemia leve"}, {"n": 31, "hb_lab": 16.3, "hb_ref": 14.5, "hb_est": 13.9, "error": 4.1, "result": "Normal"}, {"n": 32, "hb_lab": 15.0, "hb_ref": 13.2, "hb_est": 12.7, "error": 3.8, "result": "Normal"}, {"n": 33, "hb_lab": 14.4, "hb_ref": 12.6, "hb_est": 12.1, "error": 4.0, "result": "Normal"}, {"n": 34, "hb_lab": 16.7, "hb_ref": 14.9, "hb_est": 14.2, "error": 4.7, "result": "Normal"}, {"n": 35, "hb_lab": 14.7, "hb_ref": 12.9, "hb_est": 12.4, "error": 3.9, "result": "Normal"}, {"n": 36, "hb_lab": 15.5, "hb_ref": 13.7, "hb_est": 13.1, "error": 4.4, "result": "Normal"}, {"n": 37, "hb_lab": 13.9, "hb_ref": 12.1, "hb_est": 11.6, "error": 4.1, "result": "Anemia leve"}, {"n": 38, "hb_lab": 16.5, "hb_ref": 14.7, "hb_est": 14.0, "error": 4.8, "result": "Normal"}, {"n": 39, "hb_lab": 15.1, "hb_ref": 13.3, "hb_est": 12.8, "error": 3.8, "result": "Normal"}, {"n": 40, "hb_lab": 14.8, "hb_ref": 13.0, "hb_est": 12.5, "error": 3.8, "result": "Normal"}, {"n": 41, "hb_lab": 16.2, "hb_ref": 14.4, "hb_est": 13.8, "error": 4.2, "result": "Normal"}, {"n": 42, "hb_lab": 15.7, "hb_ref": 13.9, "hb_est": 13.3, "error": 4.3, "result": "Normal"}, {"n": 43, "hb_lab": 14.3, "hb_ref": 12.5, "hb_est": 12.0, "error": 4.0, "result": "Normal"}, {"n": 44, "hb_lab": 16.9, "hb_ref": 15.1, "hb_est": 14.4, "error": 4.6, "result": "Normal"}, {"n": 45, "hb_lab": 15.3, "hb_ref": 13.5, "hb_est": 13.0, "error": 3.7, "result": "Normal"}, {"n": 46, "hb_lab": 14.6, "hb_ref": 12.8, "hb_est": 12.3, "error": 3.9, "result": "Normal"}, {"n": 47, "hb_lab": 16.0, "hb_ref": 14.2, "hb_est": 13.6, "error": 4.2, "result": "Normal"}, {"n": 48, "hb_lab": 15.8, "hb_ref": 14.0, "hb_est": 13.4, "error": 4.3, "result": "Normal"}, {"n": 49, "hb_lab": 14.1, "hb_ref": 12.3, "hb_est": 11.8, "error": 4.1, "result": "Anemia leve"}, {"n": 50, "hb_lab": 16.4, "hb_ref": 14.6, "hb_est": 13.9, "error": 4.8, "result": "Normal"}, {"n": 51, "hb_lab": 15.0, "hb_ref": 13.2, "hb_est": 12.7, "error": 3.8, "result": "Normal"}, {"n": 52, "hb_lab": 12.2, "hb_ref": 10.4, "hb_est": 9.8, "error": 5.8, "result": "Anemia moderada"}, {"n": 53, "hb_lab": 15.4, "hb_ref": 13.6, "hb_est": 13.1, "error": 3.7, "result": "Normal"}, {"n": 54, "hb_lab": 14.5, "hb_ref": 12.7, "hb_est": 12.2, "error": 3.9, "result": "Normal"}, {"n": 55, "hb_lab": 16.1, "hb_ref": 14.3, "hb_est": 13.7, "error": 4.2, "result": "Normal"}, {"n": 56, "hb_lab": 15.6, "hb_ref": 13.8, "hb_est": 13.2, "error": 4.3, "result": "Normal"}, {"n": 57, "hb_lab": 13.8, "hb_ref": 12.0, "hb_est": 11.6, "error": 3.3, "result": "Anemia leve"}, {"n": 58, "hb_lab": 16.7, "hb_ref": 14.9, "hb_est": 14.2, "error": 4.7, "result": "Normal"}, {"n": 59, "hb_lab": 14.9, "hb_ref": 13.1, "hb_est": 12.6, "error": 3.8, "result": "Normal"}, {"n": 60, "hb_lab": 15.4, "hb_ref": 13.6, "hb_est": 13.0, "error": 4.4, "result": "Normal"}, {"n": 61, "hb_lab": 16.3, "hb_ref": 14.5, "hb_est": 13.9, "error": 4.1, "result": "Normal"}, {"n": 62, "hb_lab": 14.2, "hb_ref": 12.4, "hb_est": 12.0, "error": 3.2, "result": "Normal"}, {"n": 63, "hb_lab": 15.9, "hb_ref": 14.1, "hb_est": 13.5, "error": 4.3, "result": "Normal"}, {"n": 64, "hb_lab": 14.7, "hb_ref": 12.9, "hb_est": 12.4, "error": 3.9, "result": "Normal"}, {"n": 65, "hb_lab": 16.5, "hb_ref": 14.7, "hb_est": 14.0, "error": 4.8, "result": "Normal"}, {"n": 66, "hb_lab": 15.2, "hb_ref": 13.4, "hb_est": 12.9, "error": 3.7, "result": "Normal"}, {"n": 67, "hb_lab": 14.0, "hb_ref": 12.2, "hb_est": 11.7, "error": 4.1, "result": "Anemia leve"}, {"n": 68, "hb_lab": 16.8, "hb_ref": 15.0, "hb_est": 14.3, "error": 4.7, "result": "Normal"}, {"n": 69, "hb_lab": 15.5, "hb_ref": 13.7, "hb_est": 13.1, "error": 4.4, "result": "Normal"}, {"n": 70, "hb_lab": 14.6, "hb_ref": 12.8, "hb_est": 12.3, "error": 3.9, "result": "Normal"}];
+const tbody = document.querySelector("#dataTable tbody");
+const search = document.querySelector("#search");
+function render(filter="") {
+  const f = filter.trim().toLowerCase();
+  tbody.innerHTML = DATA.filter(r => !f || String(r.n).includes(f) || r.result.toLowerCase().includes(f))
+    .map(r => `<tr><td>${r.n}</td><td>${r.hb_lab.toFixed(1)}</td><td>${r.hb_ref.toFixed(1)}</td><td>${r.hb_est.toFixed(1)}</td><td>${r.error.toFixed(1)}</td><td>${r.result}</td></tr>`).join("");
+}
+search.addEventListener("input", e => render(e.target.value));
+render();
+</script>
+</body>
+</html>
